@@ -1,0 +1,16 @@
+Package: gaston.env
+Type: Package
+Title: Gene x environment analysis based on gaston package
+Version: 1.0
+Date: 2017-05-24
+Encoding: UTF-8
+Author: Claire Dandine-Roulland
+Maintainer: Claire Dandine-Roulland <dandine@cng.fr>
+Description: Gene x environment analysis based on gaston package
+License: GPL-3
+LinkingTo: Rcpp, RcppParallel, RcppEigen, gaston
+Depends: Rcpp, RcppParallel, methods, gaston
+Imports: gaston
+NeedsCompilation: yes
+LazyLoad: yes
+LazyData: yes

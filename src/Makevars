@@ -1,0 +1,5 @@
+# required by  RcppParallel
+CXX_STD = CXX11 
+
+# link zlib
+PKG_LIBS = -lz	
