@@ -14,7 +14,7 @@ inline void wald_compute(Eigen::VectorXd & beta, Eigen::MatrixXd & VAR, double &
   double d, log_d;
 
   sym_inverse(VAR, VAR_i, log_d, d, 1e-5);
-  wald = ( VAR_i * beta ).dot( beta );
+  wald = beta.transpose() * ( VAR_i * beta );
 }
 
 #endif

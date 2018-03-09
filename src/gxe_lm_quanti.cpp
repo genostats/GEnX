@@ -45,6 +45,7 @@ List GxE_lm_quanti(XPtr<matrix4> pA, NumericVector mu, NumericVector Y,
   MATRIX W(3,3);
   MATRIX W_i(3,3);
   MATRIX VAR(3,3);
+  MATRIX VAR2(2,2);
 
   scalar d, log_d;
   
@@ -57,6 +58,7 @@ List GxE_lm_quanti(XPtr<matrix4> pA, NumericVector mu, NumericVector Y,
   // declare vectors containing result
   VECTOR beta(r);
   VECTOR gamma(3);
+  VECTOR gamma2(2);
   scalar s2, wald;
   
   NumericVector BETA_E(end-beg+1);
@@ -72,7 +74,6 @@ List GxE_lm_quanti(XPtr<matrix4> pA, NumericVector mu, NumericVector Y,
   NumericVector WALD_2df(end-beg+1);
   
   for(int i = beg; i <= end; i++) {
-    VECTOR SNP(n);
     if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
       BETA_E(i-beg) = NAN;
       BETA_SNP(i-beg) = NAN;
@@ -100,7 +101,7 @@ List GxE_lm_quanti(XPtr<matrix4> pA, NumericVector mu, NumericVector Y,
     { int ii = pA->true_ncol-1;
       uint8_t xx = pA->data[i][ii];
       for(int ss = 0; ss < 4 && 4*ii+ss < pA->ncol; ss++) {
-        I(4*ii+ss, r-2) = ((xx&3) != 3)?(xx&3):mu(i);
+        I(4*ii+ss, 1) = ((xx&3) != 3)?(xx&3):mu(i);
         I(4*ii+ss, 2) = I(4*ii+ss, 0)*I(4*ii+ss, 1);
         xx >>= 2;
       }
@@ -130,13 +131,14 @@ List GxE_lm_quanti(XPtr<matrix4> pA, NumericVector mu, NumericVector Y,
     COVBETA_E_ExSNP(i-beg) = VAR(0,2);
     COVBETA_SNP_ExSNP(i-beg) = VAR(1,2);
 	
+    gamma2 = gamma.tail(2);
+	VAR2 = VAR.bottomRightCorner(2,2);
+	
 	wald_compute(gamma, VAR, wald);
 	WALD_3df(i-beg) = wald;
 	
-	gamma = gamma.tail(2);
-	VAR = VAR.block(1,1,2,2);
-	wald_compute(gamma, VAR, wald);
-	WALD_3df(i-beg) = wald;
+	wald_compute(gamma2, VAR2, wald);
+	WALD_2df(i-beg) = wald;
   }
   
   List R;

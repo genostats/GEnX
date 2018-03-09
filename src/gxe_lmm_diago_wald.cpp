@@ -63,7 +63,9 @@ List GxE_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
   
   // variance matrix for Wald test
   VECTOR beta_int;
+  VECTOR beta_int2;
   MATRIX VAR;
+  MATRIX VAR2;
   scalar wald;
   
   // object for likelihood maximization
@@ -94,7 +96,7 @@ List GxE_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
       uint8_t x = pA->data[i][ii];
       for(int ss = 0; ss < 4; ss++) {
         SNP(4*ii+ss) = ((x&3) != 3)?(x&3):mu(i);
-		INT(4*ii+ss) = A.X(4*ii+ss,r-3) * SNP(4*ii+ss);
+		INT(4*ii+ss) = x0(4*ii+ss,r-3) * SNP(4*ii+ss);
         x >>= 2;
       }
     }
@@ -102,7 +104,7 @@ List GxE_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
       uint8_t x = pA->data[i][ii];
       for(int ss = 0; ss < 4 && 4*ii+ss < pA->ncol; ss++) {
         SNP(4*ii+ss) = ((x&3) != 3)?(x&3):mu(i);
-		INT(4*ii+ss) = A.X(4*ii+ss,r-3) * SNP(4*ii+ss);
+		INT(4*ii+ss) = x0(4*ii+ss,r-3) * SNP(4*ii+ss);
         x >>= 2;
       }
     }
@@ -124,7 +126,7 @@ List GxE_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
     
     if(A.d != 0) {
       H2(i-beg) = h2;
-	  VAR = A.v * A.XViX_i.block(r-3,r-3,3,3);
+	  VAR = A.v * A.XViX_i.bottomRightCorner(3,3);
       BETA_E(i-beg) = beta(r-3);
       BETA_SNP(i-beg) = beta(r-2);
       BETA_ExSNP(i-beg) = beta(r-1);
@@ -136,12 +138,11 @@ List GxE_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
       COVBETA_SNP_ExSNP(i-beg) = VAR(1,2);
 	  
 	  beta_int = beta.tail(3);
+	  beta_int2 = beta.tail(2);
+	  VAR2 = VAR.bottomRightCorner(2,2);
 	  wald_compute(beta_int, VAR, wald);
 	  WALD_3df(i-beg) = wald;
-	  
-	  beta_int = beta.tail(2);
-	  VAR = VAR.block(1,1,2,2);
-	  wald_compute(beta_int, VAR, wald);
+	  wald_compute(beta_int2, VAR2, wald);
 	  WALD_2df(i-beg) = wald;
     } else {
       H2(i-beg) = NAN;

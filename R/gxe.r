@@ -111,13 +111,16 @@ genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), 
     }
     if(response == "binary") {
 	  stop("GxE analysis force response = 'quantitative' and test = 'wald'")
-    #  if( any(is.na(Y)) ) 
-    #    stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")
-    #  if(p > 0) 
-    #    X <- cbind(X, eigenK$vectors[,seq_len(p)])
-    #  X <- cbind(X,0)
-    #  t <- .Call("gg_GWAS_logit_wald_f", PACKAGE = "gaston", x@bed, x@mu, Y, X, beg-1, end-1, tol);
-    #  t$p <- pchisq( (t$beta/t$sd)**2, df = 1, lower.tail=FALSE)
+      if( any(is.na(Y)) ) 
+        stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")
+      if(p > 0) X <- cbind(X, eigenK$vectors[,seq_len(p)])
+      X <- cbind(X,0,0)
+      t <- .Call("gg_GxE_logit_wald", PACKAGE = "gaston.env", x@bed, x@mu, Y, X, beg-1, end-1, tol);
+      t$p_3df <- pchisq( t$Wald_3df, df = 3, lower.tail=FALSE)
+      t <- t[c(1:(length(t)-2),length(t),length(t)-1)] # ordre des résultats
+	  t$p_2df <- pchisq( t$Wald_2df, df = 2, lower.tail=FALSE)
+	  t$Wald_1df <- (t$beta_ExSNP/t$sd_ExSNP)**2
+	  t$p_1df <- pchisq( t$Wald_1df, df = 1, lower.tail=FALSE)
     }
   }
   L <- list(chr = x@snps$chr, pos = x@snps$pos, id  = x@snps$id)
