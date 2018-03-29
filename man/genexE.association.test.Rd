@@ -5,7 +5,7 @@
 
 \description{ Association tests between phenotype and interaction between SNPs and environment variable. }
 \usage{ 
-genexE.association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
+genexE.association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
                  method = c("lm", "lmm"), response = c("quantitative", "binary"), 
                  test = c("score", "wald", "lrt"), df=c(1,2,3), K, eigenK, beg = 1, 
                  end = ncol(x), p = 0, tol = .Machine$double.eps^0.25, ...)
@@ -15,6 +15,7 @@ genexE.association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   \item{x}{ A \code{\link{bed.matrix}} }
   \item{Y}{ The phenotype vector. Default is the column (\code{pheno}) of \code{x@ped} }
   \item{X}{ A covariable matrix. The default is a column vector of ones, to include an intercept in the model }
+  \item{E}{ The environmental variable vector }
   \item{method}{ Method to use: \code{"lm"} for (generalized) linear model, and \code{"lmm"} for (generalized) linear mixed model }
   \item{response}{ Is \code{"Y"} a quantitative or a binary phenotype?}
   \item{test}{ Which test to use. For binary phenotypes, \code{test = "score"} is mandatory}
@@ -79,10 +80,18 @@ genexE.association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
 \value{
   A data frame, giving for each considered SNP, some of the following columns depending on the 
   values of \code{method} and \code{test}:
-  \item{score}{Score statistic for each SNP}
   \item{h2}{Estimated value of \eqn{\tau \over {\tau + \sigma^2}}{tau/(tau + sigma^2)}}
-  \item{beta}{Estimated value of \eqn{\beta}{beta}}
-  \item{sd}{Estimated standard deviation of the \eqn{\beta}{beta} estimation}
+  \item{beta_E}{Estimated value of \eqn{\beta_E}{beta_E}}
+  \item{sd_E}{Estimated standard deviation of the \eqn{\beta_E}{beta_E} estimation}
+  \item{beta_SNP}{Estimated value of \eqn{\beta_{SNP}}{beta_SNP}}
+  \item{sd_SNP}{Estimated standard deviation of the \eqn{\beta_{SNP}}{beta_SNP} estimation}
+  \item{beta_ExSNP}{Estimated value of \eqn{\beta_{ExSNP}}{beta_ExNP}}
+  \item{sd_ExSNP}{Estimated standard deviation of the \eqn{\beta_{ExSNP}}{beta_ExSNP} estimation}
+  \item{cov_E_SNP}{Estimated covariance between the \eqn{\beta_E}{beta_E} and \eqn{\beta_{SNP}}{beta_SNP} estimations}
+  \item{cov_E_ExSNP}{Estimated covariance between the \eqn{\beta_E}}{beta_E} and \eqn{\beta_{SNP}}{beta_SNP} estimations}
+  \item{cov_SNP_ExSNP}{Estimated covariance between the \eqn{\beta_{SNP}}{beta_SNP} and \eqn{\beta_{ExSNP}}{beta_ExSNP} estimations}  
+  \item{Wald}{Wald statistic for each SNP}
+  \item{score}{Score statistic for each SNP}
   \item{LRT}{Value of the Likelihood Ratio Test}
   \item{p}{The corresponding p-value}
 }
@@ -114,7 +123,6 @@ qqplot.pvalues(test$p)
 # a small Manhattan plot 
 # hihlighting the link between p-values and LD with SNP #631
 lds <- LD(x, 631, c(1,ncol(x)))
-test$p <- test$p_1df
 manhattan(test, col = rgb(lds,0,0), pch = 20)
 
 # use y to simulate a binary phenotype
@@ -125,7 +133,6 @@ t_binary <- genexE.association.test(x, y1, E=E, method = "lm", response = "binar
 # another small Manhattan plot for 2 df Wald test
 t_binary$p <- t_binary$p
 manhattan(t_binary, col = rgb(lds,0,0), pch = 20)
-
 }}
 
 \keyword{ Gene x Environment Iteracttion Association Test }
