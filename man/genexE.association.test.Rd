@@ -88,7 +88,7 @@ genexE.association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
   \item{beta_ExSNP}{Estimated value of \eqn{\beta_{ExSNP}}{beta_ExNP}}
   \item{sd_ExSNP}{Estimated standard deviation of the \eqn{\beta_{ExSNP}}{beta_ExSNP} estimation}
   \item{cov_E_SNP}{Estimated covariance between the \eqn{\beta_E}{beta_E} and \eqn{\beta_{SNP}}{beta_SNP} estimations}
-  \item{cov_E_ExSNP}{Estimated covariance between the \eqn{\beta_E}}{beta_E} and \eqn{\beta_{SNP}}{beta_SNP} estimations}
+  \item{cov_E_ExSNP}{Estimated covariance between the \eqn{\beta_E}{beta_E} and \eqn{\beta_{SNP}}{beta_SNP} estimations}
   \item{cov_SNP_ExSNP}{Estimated covariance between the \eqn{\beta_{SNP}}{beta_SNP} and \eqn{\beta_{ExSNP}}{beta_ExSNP} estimations}  
   \item{Wald}{Wald statistic for each SNP}
   \item{score}{Score statistic for each SNP}
