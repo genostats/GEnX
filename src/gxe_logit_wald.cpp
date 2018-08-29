@@ -1,6 +1,6 @@
 #include <Rcpp.h>
-#include "logit.h"
-#include "matrix4.h"
+#include "gaston/logit.h"
+#include "gaston/matrix4.h"
 #include "wald.h"
 #include <ctime>
 #include <cmath>

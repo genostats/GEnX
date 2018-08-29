@@ -3,7 +3,7 @@
 #include <RcppEigen.h>
 #include <cmath>
 #include <iostream>
-#include "matrix-varia.h"
+#include "gaston/matrix-varia.h"
 
 using namespace Rcpp;
 using namespace Eigen;

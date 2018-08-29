@@ -1,6 +1,6 @@
 #include <Rcpp.h>
-#include "diago2.h"
-#include "matrix4.h"
+#include "gaston/diago2.h"
+#include "gaston/matrix4.h"
 #include "wald.h"
 #include <cmath>
 

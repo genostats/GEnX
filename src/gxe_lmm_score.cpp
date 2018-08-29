@@ -1,6 +1,6 @@
 #include <Rcpp.h>
-#include "matrix-varia.h"
-#include "matrix4.h"
+#include "gaston/matrix-varia.h"
+#include "gaston/matrix4.h"
 #include "score.h"
 
 // float version

@@ -1,7 +1,7 @@
 #include <Rcpp.h>
 #include <RcppEigen.h>
-#include "matrix4.h"
-#include "matrix-varia.h"
+#include "gaston/matrix4.h"
+#include "gaston/matrix-varia.h"
 #include "wald.h"
 #include <ctime>
 #include <cmath>

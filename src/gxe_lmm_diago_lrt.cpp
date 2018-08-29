@@ -1,7 +1,7 @@
 #include <Rcpp.h>
-#include "diago2_full.h"
-#include "diago2_full_nocovar.h"
-#include "matrix4.h"
+#include "gaston/diago2_full.h"
+#include "gaston/diago2_full_nocovar.h"
+#include "gaston/matrix4.h"
 
 // laisser en double ça va aussi vite (plus vite ?) et ça fait vraiment
 // une différence si il y a des covariables
