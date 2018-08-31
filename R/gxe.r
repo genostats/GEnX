@@ -147,6 +147,7 @@ genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), 
 	  X <- cbind(X, E, 0, 0)
       if (df==1) {
         t <- .Call("gg_GxE_logit_wald_1df", PACKAGE = "gaston.env", x@bed, x@mu, Y, X, beg-1, end-1, tol);
+		
 		t$Wald <- (t$beta_ExSNP/t$sd_ExSNP)**2
 		t$p <- pchisq( t$Wald, df = 1, lower.tail=FALSE)
       } else if (df==2) {
@@ -154,14 +155,13 @@ genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), 
 		t$p <- pchisq( t$Wald, df = 2, lower.tail=FALSE)
       } else if (df==3) {
         t <- .Call("gg_GxE_logit_wald_3df", PACKAGE = "gaston.env", x@bed, x@mu, Y, X, beg-1, end-1, tol);
-        t <- .Call("gg_GxE_logit_wald_3df", PACKAGE = "gaston.env", x@bed, x@mu, Y, X, beg-1, end-1, tol);
 		t$p <- pchisq( t$Wald, df = 3, lower.tail=FALSE)
       }
     }
   }
   L <- list(chr = x@snps$chr, pos = x@snps$pos, id  = x@snps$id)
   if(beg > 1 | end < ncol(x))  # avoid copy
-    L <- L[beg:end,] 
+  L <- L[beg:end,] 
 
   data.frame( c( L, t) )
 }

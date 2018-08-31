@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include "gaston/logit.h"
+#include "logit.h"
 #include "gaston/matrix4.h"
 #include "wald.h"
 #include <ctime>
@@ -23,6 +23,8 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
       x(i,j) = (float) X(i,j);
 
   // declare vectors containing result
+  NumericMatrix BETA(end-beg+1,r-3);
+  NumericMatrix HH(end-beg+1,r*r);
   NumericVector BETA_E(end-beg+1);
   NumericVector BETA_SNP(end-beg+1);
   NumericVector BETA_ExSNP(end-beg+1);
@@ -69,16 +71,28 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
     }
 
     MatrixXf Varbeta(r,r);
-    logistic_model_f(y, x, tol, Beta, Varbeta);
+	MatrixXf H(r,r);
+    logistic_model_f(y, x, tol, Beta, H, Varbeta);
 	
 	MatrixXd varbeta(r,r);
+	MatrixXd h(r,r);
 	VectorXd beta(r);
     for(int k = 0; k < r; k++) {
 	  beta(k) = (float) Beta(k);
-      for(int l = 0; l < r; l++)
+      for(int l = 0; l < r; l++) {
+		h(k,l) = (float) H(k,l);
         varbeta(k,l) = (float) Varbeta(k,l);
+	  }
     }
 	
+	for(int k = 0; k < r-3; k++) {
+	  BETA(i-beg,k) = beta(k);
+	}
+    for(int k = 0; k < r; k++) {
+	  for(int l = 0; l < r; l++) {
+	    HH(i-beg,r*k+l) = h(k,l);
+	  }
+	}
     BETA_E(i-beg) = beta(r-3);
     BETA_SNP(i-beg) = beta(r-2);
     BETA_ExSNP(i-beg) = beta(r-1);
@@ -91,6 +105,8 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   }
 
   List R;
+  R["H"] = HH;
+  R["beta"] = BETA;
   R["beta_E"] = BETA_E;
   R["beta_SNP"] = BETA_SNP;
   R["beta_ExSNP"] = BETA_ExSNP;
@@ -164,7 +180,8 @@ List GxE_logit_wald_2df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
     }
 
     MatrixXf Varbeta(r,r);
-    logistic_model_f(y, x, tol, Beta, Varbeta);
+	MatrixXf H(r,r);
+    logistic_model_f(y, x, tol, Beta, H, Varbeta);
 	
 	MatrixXd varbeta(r,r);
 	VectorXd beta(r);
@@ -267,7 +284,8 @@ List GxE_logit_wald_3df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
     }
 
     MatrixXf Varbeta(r,r);
-    logistic_model_f(y, x, tol, Beta, Varbeta);
+	MatrixXf H(r,r);
+    logistic_model_f(y, x, tol, Beta, H, Varbeta);
 	
 	MatrixXd varbeta(r,r);
 	VectorXd beta(r);
