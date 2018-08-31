@@ -50,8 +50,8 @@ void logistic_model(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T2>
   }
   WX.noalias() = W.asDiagonal() * x;
   XWX.noalias() = x.transpose() * WX;
-  //XWX_i = XWX.llt().solve( MatrixXd::Identity(p,p) );
-  sym_inverse(XWX, XWX_i, log_d, d, 1e-5);
+  XWX_i = XWX.llt().solve( MatrixXd::Identity(p,p) );
+  //sym_inverse(XWX, XWX_i, log_d, d, 1e-5);
 }
 
 // en float
@@ -104,8 +104,10 @@ void logistic_model_f(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T
   }
   WX.noalias() = W.asDiagonal() * x;
   XWX.noalias() = x.transpose() * WX;
-  //XWX_i = XWX.llt().solve( MatrixXd::Identity(p,p) );
+  XWX_i = XWX.llt().solve( MatrixXf::Identity(p,p) );
   //sym_inverse(XWX, XWX_i, log_d, d, 1e-5);
-  XWX_i = XWX.inverse();
+  //XWX_i = XWX.inverse();
+  XWX = XWX_i.inverse();
+  //XWX = XWX_i.llt().solve( MatrixXf::Identity(p,p) );
 }
 #endif

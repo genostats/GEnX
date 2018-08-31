@@ -25,6 +25,7 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   // declare vectors containing result
   NumericMatrix BETA(end-beg+1,r-3);
   NumericMatrix HH(end-beg+1,r*r);
+  NumericMatrix Hi(end-beg+1,r*r);
   NumericVector BETA_E(end-beg+1);
   NumericVector BETA_SNP(end-beg+1);
   NumericVector BETA_ExSNP(end-beg+1);
@@ -91,6 +92,7 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
     for(int k = 0; k < r; k++) {
 	  for(int l = 0; l < r; l++) {
 	    HH(i-beg,r*k+l) = h(k,l);
+		Hi(i-beg,r*k+l) = varbeta(k,l);
 	  }
 	}
     BETA_E(i-beg) = beta(r-3);
@@ -116,6 +118,7 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   R["cov_E_SNP"] =  COVBETA_E_SNP;
   R["cov_E_ExSNP"] = COVBETA_E_ExSNP;
   R["cov_SNP_ExSNP"] = COVBETA_SNP_ExSNP;
+  R["Hi"] = Hi;
   return R;
 }
 
