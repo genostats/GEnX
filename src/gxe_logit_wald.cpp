@@ -1,11 +1,15 @@
 #include <Rcpp.h>
-#include "logit.h"
+#include "gaston/logit.h"
 #include "gaston/matrix4.h"
 #include "wald.h"
 #include <ctime>
 #include <cmath>
 #include <iostream>
 #define BLOCK 20 
+
+
+// Ne marche pas avec les float au niveau de l'inversion de XtWX dans logit.h
+// Je ne sais pas pourquoi...
 
 //[[Rcpp::export]]
 List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMatrix X, 
@@ -14,6 +18,7 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   int r = X.ncol();
 
   // recopiage des matrices... en float
+  /*
   MatrixXf y(n,1);
   MatrixXf x(n,r);
   for(int i = 0; i < n; i++) y(i,0) = (float) Y[i];
@@ -21,6 +26,17 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   for(int i = 0; i < n; i++) 
     for(int j = 0; j < r; j++)
       x(i,j) = (float) X(i,j);
+  */
+  
+  // recopiage des matrices
+  MatrixXd y(n,1);
+  MatrixXd x(n,r);
+  for(int i = 0; i < n; i++) y(i,0) = Y[i];
+
+  for(int i = 0; i < n; i++) 
+    for(int j = 0; j < r; j++)
+      x(i,j) = X(i,j);
+
 
   // declare vectors containing result
   NumericMatrix BETA(end-beg+1,r-3);
@@ -38,8 +54,10 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   NumericVector WALD_3df(end-beg+1);
   NumericVector WALD_2df(end-beg+1);
 
-  VectorXf Beta(r);
-  Beta.setZero();
+  //VectorXf Beta(r);
+  //Beta.setZero();
+  VectorXd beta(r);
+  beta.setZero();
   for(int i = beg; i <= end; i++) { 
     if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
       BETA_E(i-beg) = NAN;
@@ -71,7 +89,8 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
       }
     }
 
-    MatrixXf Varbeta(r,r);
+    /*
+	MatrixXf Varbeta(r,r);
 	MatrixXf H(r,r);
     logistic_model_f(y, x, tol, Beta, H, Varbeta);
 	
@@ -85,16 +104,24 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
         varbeta(k,l) = (float) Varbeta(k,l);
 	  }
     }
+	*/
+	
+	MatrixXd varbeta(r,r);
+	MatrixXd h(r,r);
+	logistic_model(y, x, tol, beta, varbeta);
 	
 	for(int k = 0; k < r-3; k++) {
 	  BETA(i-beg,k) = beta(k);
 	}
+	
+	/*
     for(int k = 0; k < r; k++) {
 	  for(int l = 0; l < r; l++) {
 	    HH(i-beg,r*k+l) = h(k,l);
 		Hi(i-beg,r*k+l) = varbeta(k,l);
 	  }
 	}
+	*/
     BETA_E(i-beg) = beta(r-3);
     BETA_SNP(i-beg) = beta(r-2);
     BETA_ExSNP(i-beg) = beta(r-1);
@@ -107,7 +134,6 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   }
 
   List R;
-  R["H"] = HH;
   R["beta"] = BETA;
   R["beta_E"] = BETA_E;
   R["beta_SNP"] = BETA_SNP;
@@ -118,7 +144,6 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   R["cov_E_SNP"] =  COVBETA_E_SNP;
   R["cov_E_ExSNP"] = COVBETA_E_ExSNP;
   R["cov_SNP_ExSNP"] = COVBETA_SNP_ExSNP;
-  R["Hi"] = Hi;
   return R;
 }
 
@@ -128,6 +153,7 @@ List GxE_logit_wald_2df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   int r = X.ncol();
 
   // recopiage des matrices... en float
+  /*
   MatrixXf y(n,1);
   MatrixXf x(n,r);
   for(int i = 0; i < n; i++) y(i,0) = (float) Y[i];
@@ -135,6 +161,16 @@ List GxE_logit_wald_2df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   for(int i = 0; i < n; i++) 
     for(int j = 0; j < r; j++)
       x(i,j) = (float) X(i,j);
+  */
+  
+  // recopiage des matrices
+  MatrixXd y(n,1);
+  MatrixXd x(n,r);
+  for(int i = 0; i < n; i++) y(i,0) = Y[i];
+
+  for(int i = 0; i < n; i++) 
+    for(int j = 0; j < r; j++)
+      x(i,j) = X(i,j);
 
   // declare vectors containing result
   NumericVector BETA_E(end-beg+1);
@@ -148,8 +184,10 @@ List GxE_logit_wald_2df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   NumericVector COVBETA_SNP_ExSNP(end-beg+1);
   NumericVector W(end-beg+1);
 
-  VectorXf Beta(r);
-  Beta.setZero();
+  //VectorXf Beta(r);
+  //Beta.setZero();
+  VectorXd beta(r);
+  beta.setZero();
   for(int i = beg; i <= end; i++) { 
     if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
       BETA_E(i-beg) = NAN;
@@ -182,9 +220,9 @@ List GxE_logit_wald_2df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
       }
     }
 
+	/*
     MatrixXf Varbeta(r,r);
-	MatrixXf H(r,r);
-    logistic_model_f(y, x, tol, Beta, H, Varbeta);
+    logistic_model_f(y, x, tol, Beta, Varbeta);
 	
 	MatrixXd varbeta(r,r);
 	VectorXd beta(r);
@@ -193,6 +231,10 @@ List GxE_logit_wald_2df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
       for(int l = 0; l < r; l++)
         varbeta(k,l) = (float) Varbeta(k,l);
     }
+	*/
+	
+	MatrixXd varbeta(r,r);
+	logistic_model(y, x, tol, beta, varbeta);
 	
     BETA_E(i-beg) = beta(r-3);
     BETA_SNP(i-beg) = beta(r-2);
@@ -232,6 +274,7 @@ List GxE_logit_wald_3df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   int r = X.ncol();
 
   // recopiage des matrices... en float
+  /*
   MatrixXf y(n,1);
   MatrixXf x(n,r);
   for(int i = 0; i < n; i++) y(i,0) = (float) Y[i];
@@ -239,6 +282,16 @@ List GxE_logit_wald_3df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   for(int i = 0; i < n; i++) 
     for(int j = 0; j < r; j++)
       x(i,j) = (float) X(i,j);
+  */
+  
+  // recopiage des matrices
+  MatrixXd y(n,1);
+  MatrixXd x(n,r);
+  for(int i = 0; i < n; i++) y(i,0) = Y[i];
+
+  for(int i = 0; i < n; i++) 
+    for(int j = 0; j < r; j++)
+      x(i,j) = X(i,j);
 
   // declare vectors containing result
   NumericVector BETA_E(end-beg+1);
@@ -252,8 +305,10 @@ List GxE_logit_wald_3df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   NumericVector COVBETA_SNP_ExSNP(end-beg+1);
   NumericVector W(end-beg+1);
 
-  VectorXf Beta(r);
-  Beta.setZero();
+  //VectorXf Beta(r);
+  //Beta.setZero();
+  VectorXd beta(r);
+  beta.setZero();
   for(int i = beg; i <= end; i++) { 
     if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
       BETA_E(i-beg) = NAN;
@@ -286,9 +341,9 @@ List GxE_logit_wald_3df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
       }
     }
 
+	/*
     MatrixXf Varbeta(r,r);
-	MatrixXf H(r,r);
-    logistic_model_f(y, x, tol, Beta, H, Varbeta);
+    logistic_model_f(y, x, tol, Beta, Varbeta);
 	
 	MatrixXd varbeta(r,r);
 	VectorXd beta(r);
@@ -297,6 +352,10 @@ List GxE_logit_wald_3df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
       for(int l = 0; l < r; l++)
         varbeta(k,l) = (float) Varbeta(k,l);
     }
+	*/
+	
+	MatrixXd varbeta(r,r);
+	logistic_model(y, x, tol, beta, varbeta);
 	
     BETA_E(i-beg) = beta(r-3);
     BETA_SNP(i-beg) = beta(r-2);
