@@ -40,8 +40,6 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
 
   // declare vectors containing result
   NumericMatrix BETA(end-beg+1,r-3);
-  NumericMatrix HH(end-beg+1,r*r);
-  NumericMatrix Hi(end-beg+1,r*r);
   NumericVector BETA_E(end-beg+1);
   NumericVector BETA_SNP(end-beg+1);
   NumericVector BETA_ExSNP(end-beg+1);
@@ -51,9 +49,7 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
   NumericVector COVBETA_E_SNP(end-beg+1);
   NumericVector COVBETA_E_ExSNP(end-beg+1);
   NumericVector COVBETA_SNP_ExSNP(end-beg+1);
-  NumericVector WALD_3df(end-beg+1);
-  NumericVector WALD_2df(end-beg+1);
-
+  
   //VectorXf Beta(r);
   //Beta.setZero();
   VectorXd beta(r);
@@ -92,36 +88,25 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
     /*
 	MatrixXf Varbeta(r,r);
 	MatrixXf H(r,r);
-    logistic_model_f(y, x, tol, Beta, H, Varbeta);
+    logistic_model_f(y, x, tol, Beta, Varbeta);
 	
 	MatrixXd varbeta(r,r);
-	MatrixXd h(r,r);
 	VectorXd beta(r);
     for(int k = 0; k < r; k++) {
 	  beta(k) = (float) Beta(k);
       for(int l = 0; l < r; l++) {
-		h(k,l) = (float) H(k,l);
         varbeta(k,l) = (float) Varbeta(k,l);
 	  }
     }
 	*/
 	
 	MatrixXd varbeta(r,r);
-	MatrixXd h(r,r);
 	logistic_model(y, x, tol, beta, varbeta);
 	
 	for(int k = 0; k < r-3; k++) {
 	  BETA(i-beg,k) = beta(k);
 	}
 	
-	/*
-    for(int k = 0; k < r; k++) {
-	  for(int l = 0; l < r; l++) {
-	    HH(i-beg,r*k+l) = h(k,l);
-		Hi(i-beg,r*k+l) = varbeta(k,l);
-	  }
-	}
-	*/
     BETA_E(i-beg) = beta(r-3);
     BETA_SNP(i-beg) = beta(r-2);
     BETA_ExSNP(i-beg) = beta(r-1);
