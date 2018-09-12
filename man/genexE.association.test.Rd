@@ -6,9 +6,13 @@
 \description{ Association tests between phenotype and interaction between SNPs and environment variable. }
 \usage{ 
 genexE.association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
-                 method = c("lm", "lmm"), response = c("quantitative", "binary"), 
-                 test = c("score", "wald", "lrt"), df=c(1,2,3), K, eigenK, beg = 1, 
-                 end = ncol(x), p = 0, tol = .Machine$double.eps^0.25, ...)
+                 method = c("lm", "lmm"),
+                 response = c("quantitative", "binary"), 
+                 test = c("score", "wald", "lrt"),
+                 df=c(1,2,3),
+                 K, eigenK,
+                 beg = 1, end = ncol(x), p = 0,
+                 tol = .Machine$double.eps^0.25, ...)
 }
 
 \arguments{
@@ -34,11 +38,11 @@ genexE.association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
   Tests the association between the phenotype and interaction between environmental variable and requested SNPs in \code{x}. At most,
   3 possible null hypothesis are availaible (depending on test and response) :
   - for \code{df=1},
-  \deqn{ H_0 : beta_{ExSNP}=0 }{ H_0 : beta_ExSNP=0 },
+  \deqn{ H_0 : \beta_{ExSNP}=0 }{ H_0 : beta_ExSNP=0 },
   - for \code{df=2},
-  \deqn{ H_0 : beta_{SNP}=beta_{ExSNP}=0 }{ H_0 : beta_SNP=beta_ExSNP=0 },
+  \deqn{ H_0 : \beta_{SNP}=\beta_{ExSNP}=0 }{ H_0 : beta_SNP=beta_ExSNP=0 },
   - for \code{df=3},
-  \deqn{ H_0 : beta_E=beta_{SNP}=beta_{ExSNP}=0 }{ H_0 : beta_E=beta_SNP=beta_ExSNP=0 }.  
+  \deqn{ H_0 : \beta_E=\beta_{SNP}=\beta_{ExSNP}=0 }{ H_0 : beta_E=beta_SNP=beta_ExSNP=0 }.  
 
   If \code{method = "lm"} and \code{response = "quantitative"} are used, a simple linear regression 
   is performed to test each SNP in the considered interval. Precisely, the following model is
@@ -98,7 +102,7 @@ genexE.association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
 
 \seealso{ \code{\link[gaston:qqplot.pvalues]{qqplot.pvalues}}, \code{\link[gaston:manhattan]{manhattan}},
           \code{\link[gaston:lmm.diago]{lmm.diago}}, \code{\link[gaston:lmm.aireml]{lmm.aireml}},
-		  \code{\link[gaston:logistic.mm.aireml]{logistic.mm.aireml}}, \code{\link[stats:association.test]{association.test}} }
+		  \code{\link[gaston:logistic.mm.aireml]{logistic.mm.aireml}}, \code{\link[gaston:association.test]{association.test}} }
 
 \examples{
 \donttest{
@@ -112,7 +116,7 @@ E <- rnorm(nrow(x), mean=5, sd=1)
 
 # simulate quantitative phenotype with effect of SNP #631 and a polygenic component 
 set.seed(1)
-y <- E * (x \%*\% c(rep(0,630),0.5,rep(0,ncol(x)-631))) + rnorm(nrow(x))
+y <- E * (x \%*\% c(rep(0,630),0.1,rep(0,ncol(x)-631))) + rnorm(nrow(x))
 
 # association test with linear model 
 test <- genexE.association.test(x, y, E=E, method="lm", response = "quanti", df=1)

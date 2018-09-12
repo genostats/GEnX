@@ -1,6 +1,6 @@
-genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E, df=c(1,2,3),
+genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
                              method = c("lm", "lmm"), response = c("quantitative", "binary"), 
-                             test = c("score", "wald", "lrt"), 
+                             test = c("score", "wald", "lrt"), df=c(1,2,3), 
                              K, eigenK, beg = 1, end = ncol(x), p = 0, 
                              tol = .Machine$double.eps^0.25, ...) {
 
