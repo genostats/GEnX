@@ -20,7 +20,7 @@ genexE.association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
   \item{Y}{ The phenotype vector. Default is the column (\code{pheno}) of \code{x@ped} }
   \item{X}{ A covariable matrix. The default is a column vector of ones, to include an intercept in the model }
   \item{E}{ The environmental variable vector }
-  \item{method}{ Method to use: \code{"lm"} for (generalized) linear model, and \code{"lmm"} for (generalized) linear mixed model }
+  \item{method}{ Method to use: \code{"lm"} for (generalized) linear model, and \code{"lmm"} for (generalized) linear  mixed model }
   \item{response}{ Is \code{"Y"} a quantitative or a binary phenotype?}
   \item{test}{ Which test to use. For binary phenotypes, \code{test = "score"} is mandatory}
   \item{df}{ Which null hypothesis to use. See details}
@@ -74,8 +74,8 @@ genexE.association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
   \deqn{ \mbox{logit}(P[Y=1| X, E, SNP, \omega])  = X\alpha + E\beta_E + G\beta_{SNP} + E*SNP\beta_{ExSNP} + \omega}{logit P(Y=1|X,E,SNP,omega)  = X alpha + E beta_E + SNP beta_SNP + E*SNP beta_ExSNP + omega}
   with \eqn{ \omega \sim N(0,\tau K) }{omega ~ N(0, tau K)}. 
   \eqn{E} the vector of the environmental variable, \eqn{SNP} is the genotype vector of the SNP, \eqn{K}{K} is a Genetic Relationship Matrix (GRM),
-  \eqn{X} the covariable matrix. A score test is performed, independantly of the value of \code{test}.
-  1 df score test is not availaible because it is very computationnaly heavy.
+  \eqn{X} the covariable matrix. Only score and Wald tests are implemented.
+  Moreover, 1 df score test is not availaible because it is very computationnaly heavy.
   All parameters under null model are estimated with the same procedure as in \code{\link{logistic.mm.aireml}}.
   It is possible to give a list in argument \code{K} for inclusion of several random effects in the model.
   If \code{p} is positive, the paramater \code{eigenK} needs to be given as well.
@@ -85,6 +85,7 @@ genexE.association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
   A data frame, giving for each considered SNP, some of the following columns depending on the 
   values of \code{method} and \code{test}:
   \item{h2}{Estimated value of \eqn{\tau \over {\tau + \sigma^2}}{tau/(tau + sigma^2)}}
+  \item{tau}{Estimated value of \eqn{\tau}{tau}}
   \item{beta_E}{Estimated value of \eqn{\beta_E}{beta_E}}
   \item{sd_E}{Estimated standard deviation of the \eqn{\beta_E}{beta_E} estimation}
   \item{beta_SNP}{Estimated value of \eqn{\beta_{SNP}}{beta_SNP}}

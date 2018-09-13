@@ -41,12 +41,12 @@ genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), 
 
   # random effect
   if(match.arg(method) == "lmm") { 
-     if(response == "binary" & test != "score") {
-      warning('Binary phenotype and method = "lmm" force test = "score"')
-      test <- "score"
-     }
+     # if(response == "binary" & test == "score") {
+      # warning('Binary phenotype and method = "lmm" force test = "score"')
+      # test <- "score"
+     # }
 
-    if(test == "score") { # | response == "binary") {
+    if(test == "score" | response == "binary") {
       if(missing(K)) stop("For a score test and for binary traits, argument K is mandatory")
       # avec le score test on peut gérer les données manquantes dans Y
       if( any(is.na(Y)) ) {
@@ -125,16 +125,27 @@ genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), 
           t <- .Call("gg_GxE_lmm_score_3df", PACKAGE = "gaston.env", x@bed, Y-pi, model$P, x@mu, E, beg-1, end-1)
           t$p <- pchisq( t$score, df = 3, lower.tail=FALSE)
 		} else stop("df must be equal to 1, 2, or 3.")		
-      #} else if(test == "wald") {
-      #  X <- cbind(X, E, 0, 0) # E and space for the SNP and SNPxE
-      #  t <- .Call("gg_GxE_logitmm_wald_f", PACKAGE = "gaston", x@bed, x@mu, Y, X, K, beg-1, end-1, tol)
-      #  t$p <- pchisq( (t$beta/t$sd)**2, df = 1, lower.tail=FALSE)
-      } else stop("LRT and Wald tests for binary trait not available")
+      } else if(test == "wald") {
+	    #stop("Wald tests for binary trait not available")
+        X <- cbind(X, E, 0, 0) # E and space for the SNP and SNPxE
+        if (df==1) {
+		  t <- .Call("gg_GxE_logitmm_wald_1df", PACKAGE = "gaston.env", x@bed, x@mu, Y, X, K, beg-1, end-1, tol)
+		  t$Wald <- (t$beta_ExSNP/t$sd_ExSNP)**2
+          t$p <- pchisq( t$Wald, df = 1, lower.tail=FALSE)
+		} else if (df==2) {
+		  t <- .Call("gg_GxE_logitmm_wald_2df", PACKAGE = "gaston.env", x@bed, x@mu, Y, X, K, beg-1, end-1, tol)
+          t$p <- pchisq( t$Wald, df = 2, lower.tail=FALSE)
+		} else if (df==3) {
+		  t <- .Call("gg_GxE_logitmm_wald_3df", PACKAGE = "gaston.env", x@bed, x@mu, Y, X, K, beg-1, end-1, tol)
+          t$p <- pchisq( t$Wald, df = 3, lower.tail=FALSE)
+		} else stop("df must be equal to 1, 2, or 3.")
+      } else stop("LRT tests for binary trait not available")
     }
   }
 
   # only fixed effects
   if(match.arg(method) == "lm") {
+    if(test != "wald") warning('Method = "lm" force test = "wald"')
     if(test != "wald") warning('Method = "lm" force test = "wald"')
     if(response == "quantitative") {
       if( any(is.na(Y)) ) 
@@ -171,7 +182,7 @@ genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), 
   }
   L <- list(chr = x@snps$chr, pos = x@snps$pos, id  = x@snps$id)
   if(beg > 1 | end < ncol(x))  # avoid copy
-  L <- L[beg:end,] 
+  L <- lapply(L, function(l) l[beg:end])
 
   data.frame( c( L, t) )
 }

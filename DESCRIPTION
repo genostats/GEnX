@@ -6,10 +6,10 @@ Date: 2017-05-24
 Encoding: UTF-8
 Author: Claire Dandine-Roulland
 Maintainer: Claire Dandine-Roulland <dandine@cng.fr>
-Description: Gene x environment analysis based on gaston package
+Description: Gene x environment association tests in classical or mixed and locgitic or linear models based on gaston package.
 License: GPL-3
 LinkingTo: Rcpp, RcppParallel, RcppEigen, gaston
-Depends: Rcpp, RcppParallel, methods, gaston
+Depends: Rcpp, RcppParallel, methods
 Imports: gaston
 NeedsCompilation: yes
 LazyLoad: yes
