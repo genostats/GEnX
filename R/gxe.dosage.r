@@ -1,19 +1,50 @@
-genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
+genexE.association.test.dosage <- function(filename, Y, X, E,
                              method = c("lm", "lmm"), response = c("quantitative", "binary"), 
                              test = c("score", "wald", "lrt"), df=c(1,2,3), 
-                             K, eigenK, beg = 1, end = ncol(x), p = 0, 
+                             K, eigenK, beg, end, p = 0, 
                              tol = .Machine$double.eps^0.25, ...) {
 
-  if(beg < 1 || end > ncol(x)) stop("range too wide")
-  if(is.null(x@mu)) stop("Need mu to be set in x")
-  if(length(Y) != nrow(x)) stop("Dimensions of Y and x mismatch")
-  if(length(E) != nrow(x)) stop("Dimensions of E and x mismatch")
+  filename <- path.expand(filename)
+  dims <- dim.dosage.file(filename)
+  nb.inds <- dims[1]
+  nb.snps <- dims[2]
+
+  if(missing(beg)) beg <- 1
+  if(missing(end)) end <- nb.snps
   
+  if(beg < 1 || end > nb.snps) stop("range too wide")
+  if(length(Y) != nb.inds) stop("Dimension of Y and #individuals in ", filename, " mismatch")
+ 
+  if(missing(X)) X <- rep(1, nb.inds); # default = intercept 
   X <- as.matrix(X)
-  if(nrow(X) != nrow(x)) stop("Dimensions of Y and x mismatch")
+
+  if(nrow(X) != nb.inds) stop("Dimensions of Y and #individuals in ", filename, " mismatch")
+
+  # check dimensions before anything
+  if(!missing(K)) {
+    if(nb.inds != nrow(K) | nb.inds != ncol(K)) stop("K dimensions and #individuals in ", filename, " mismatch")
+  }
+
+  if(!missing(K)) {
+    if(!is.list(K)) {
+      if(nb.inds != nrow(K) | nb.inds != ncol(K))
+        stop("K and x dimensions don't match")
+    } else {
+      if(any(nb.inds != sapply(K, nrow)) | any(nb.inds != sapply(K, ncol)))
+        stop("K and x dimensions don't match")
+    }
+  }
+
+  if(!missing(eigenK)) {
+    if(nb.inds != nrow(eigenK$vectors) | nb.inds != ncol(eigenK$vectors) | nb.inds != length(eigenK$values)) 
+      stop("eigenK dimensions and #individuals in ", filename, " mismatch")
+  }
+
 
   response <- match.arg(response)
   test <- match.arg(test)
+  method <- match.arg(method)
+ 
   
   # preparation de X 
   if(p > 0) {
@@ -29,16 +60,7 @@ genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), 
     X <- trans.X(X, mean.y = mean(Y))
   }
   
-  # check dimensions before anything
-  n <- nrow(x)
-  if(!missing(K)) {
-    if(n != nrow(K) | n != ncol(K)) stop("K and x dimensions don't match")
-  }
-  if(!missing(eigenK)) {
-    if(n != nrow(eigenK$vectors) | n != ncol(eigenK$vectors) | n != length(eigenK$values)) 
-      stop("eigenK and x dimensions don't match")
-  }
-
+  
   # random effect
   if(match.arg(method) == "lmm") { 
      # if(response == "binary" & test == "score") {
@@ -93,16 +115,11 @@ genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), 
 		  t$p <- pchisq( t$Wald, df = 3, lower.tail=FALSE)
 		}
       } else { # test == "lrt"
-        X <- cbind(X, E, 0, 0) # space for the SNP and interaction
-		if (df==1) {
-          t <- .Call("gg_GxE_lmm_lrt_1df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, p, eigenK$values, eigenK$vectors, beg-1, end-1, tol)
-          t$p <- pchisq( t$LRT, df = 1, lower.tail=FALSE)
-		} else if (df==2) {
-          t <- .Call("gg_GxE_lmm_lrt_2df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, p, eigenK$values, eigenK$vectors, beg-1, end-1, tol)
-          t$p <- pchisq( t$LRT, df = 2, lower.tail=FALSE)
-		} else if (df==3) {
-          t <- .Call("gg_GxE_lmm_lrt_3df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, p, eigenK$values, eigenK$vectors, beg-1, end-1, tol)
-          t$p <- pchisq( t$LRT, df = 3, lower.tail=FALSE)
+        if (df %in% 1:3)
+        {
+          X <- cbind(X, E, 0, 0) # space for the SNP and interaction
+		  t <- .Call("gg_GxE_lmm_lrt_dosage", PACKAGE = "GEnX", filename, Y, X, p, eigenK$values, eigenK$vectors, df, beg, end, tol)
+          t$p <- pchisq( t$LRT, df = df, lower.tail=FALSE)
 		} else stop("df must be equal to 1, 2, or 3.")
       }
     } else { # response == "binary", seulement le score test, avec argument K
@@ -180,11 +197,7 @@ genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), 
       }
     }
   }
-  L <- list(chr = x@snps$chr, pos = x@snps$pos, id  = x@snps$id)
-  if(beg > 1 | end < ncol(x))  # avoid copy
-  L <- lapply(L, function(l) l[beg:end])
-
-  data.frame( c( L, t) )
+  data.frame( t )
 }
 
 

@@ -8,7 +8,7 @@ Author: Claire Dandine-Roulland
 Maintainer: Claire Dandine-Roulland <dandine@cng.fr>
 Description: Gene x environment association tests in classical or mixed and locgitic or linear models based on gaston package.
 License: GPL-3
-LinkingTo: Rcpp, RcppParallel, RcppEigen, gaston
+LinkingTo: Rcpp, RcppParallel, RcppEigen, gaston, gaston.utils
 Depends: Rcpp, RcppParallel, methods
 Imports: gaston
 NeedsCompilation: yes

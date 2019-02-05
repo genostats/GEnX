@@ -1,4 +1,4 @@
-genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
+genexE.association.test_bis <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
                              method = c("lm", "lmm"), response = c("quantitative", "binary"), 
                              test = c("score", "wald", "lrt"), df=c(1,2,3), 
                              K, eigenK, beg = 1, end = ncol(x), p = 0, 
@@ -93,16 +93,12 @@ genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), 
 		  t$p <- pchisq( t$Wald, df = 3, lower.tail=FALSE)
 		}
       } else { # test == "lrt"
-        X <- cbind(X, E, 0, 0) # space for the SNP and interaction
-		if (df==1) {
-          t <- .Call("gg_GxE_lmm_lrt_1df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, p, eigenK$values, eigenK$vectors, beg-1, end-1, tol)
-          t$p <- pchisq( t$LRT, df = 1, lower.tail=FALSE)
-		} else if (df==2) {
-          t <- .Call("gg_GxE_lmm_lrt_2df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, p, eigenK$values, eigenK$vectors, beg-1, end-1, tol)
-          t$p <- pchisq( t$LRT, df = 2, lower.tail=FALSE)
-		} else if (df==3) {
-          t <- .Call("gg_GxE_lmm_lrt_3df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, p, eigenK$values, eigenK$vectors, beg-1, end-1, tol)
-          t$p <- pchisq( t$LRT, df = 3, lower.tail=FALSE)
+        if (df %in% 1:3)
+        {
+          X <- cbind(X, E, 0, 0) # space for the SNP and interaction
+          cat('OK\n')
+          t <- .Call("gg_GxE_lmm_lrt_bed", PACKAGE = "GEnX", x@bed, x@p, Y, X, p, eigenK$values, eigenK$vectors, df, beg-1, end-1, tol)
+		  t$p <- pchisq( t$LRT, df = df, lower.tail=FALSE)
 		} else stop("df must be equal to 1, 2, or 3.")
       }
     } else { # response == "binary", seulement le score test, avec argument K
