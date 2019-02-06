@@ -91,30 +91,20 @@ genexE.association.test.dosage <- function(filename, Y, X, E,
       if(test == "score") {
 		if (df==1) {
 		  stop("For 1 df interaction test, score is not judicious (computationnaly heavy). Try LRT or Wald tesst.")
-		} else if (df==2) {
+		} else if (df %in% 2:3) {
+		  stop('Score not implemented yet')
 		  X <- cbind(X, E)
           model <- lmm.aireml(Y, X = X, K, get.P = TRUE, ... )
           t <- .Call("gg_GxE_lmm_score_2df", PACKAGE = "GEnX", x@bed, model$Py, model$P, x@mu, E, beg-1, end-1)
           t$p <- pchisq( t$score, df = 2, lower.tail=FALSE)
-		} else if (df==3) {
-          model <- lmm.aireml(Y, X = X, K, get.P = TRUE, ... )
-          t <- .Call("gg_GxE_lmm_score_3df", PACKAGE = "GEnX", x@bed, model$Py, model$P, x@mu, E, beg-1, end-1)
-          t$p <- pchisq( t$score, df = 3, lower.tail=FALSE)
 		} else stop("df must be equal to 1, 2, or 3.")		
       } else if(test == "wald") {
-        X <- cbind(X, E, 0, 0) # space for the SNP, E and SNPxE
-		if (df==1) {
-          t <- .Call("gg_GxE_lmm_wald_1df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, p, eigenK$values, eigenK$vectors, beg-1, end-1, tol)
-		  t$Wald <- (t$beta_ExSNP/t$sd_ExSNP)**2
-		  t$p <- pchisq( t$Wald, df = 1, lower.tail=FALSE)
-        } else if (df==2) {
-          t <- .Call("gg_GxE_lmm_wald_2df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, p, eigenK$values, eigenK$vectors, beg-1, end-1, tol)
-		  t$p <- pchisq( t$Wald, df = 2, lower.tail=FALSE)
-        } else if (df==3) {
-          t <- .Call("gg_GxE_lmm_wald_3df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, p, eigenK$values, eigenK$vectors, beg-1, end-1, tol)
-		  t$p <- pchisq( t$Wald, df = 3, lower.tail=FALSE)
-		}
-      } else { # test == "lrt"
+		if (df %in% 1:3) {
+          X <- cbind(X, E, 0, 0) # space for the SNP, E and SNPxE
+          t <- .Call("gg_GxE_lmm_wald_dosage", PACKAGE = "GEnX", filename, Y, X, p, eigenK$values, eigenK$vectors, df, beg, end, tol)
+		  t$p <- pchisq( t$Wald, df = df, lower.tail=FALSE)
+        } else stop("df must be equal to 1, 2, or 3.")
+      } else ( test == "lrt") {
         if (df %in% 1:3)
         {
           X <- cbind(X, E, 0, 0) # space for the SNP and interaction
@@ -125,36 +115,22 @@ genexE.association.test.dosage <- function(filename, Y, X, E,
     } else { # response == "binary", seulement le score test, avec argument K
       if(test == "score") {
 		if (df==1) {
-		  stop("For 1 df interaction test, score is not judicious (computationnaly heavy). Try 2 ou 3 df tests.")
-		} else if (df==2) {
-		  X <- cbind(X, E)
-          model <- logistic.mm.aireml(Y, X = X, K, get.P = TRUE, ... )
+		  stop("For 1 df interaction test, score is not judicious (computationnaly heavy). Try LRT or Wald tests.")
+		} else if (df %in% 2:3) {
+          if (df==2) model <- logistic.mm.aireml(Y, X = cbind(X, E), K, get.P = TRUE, ... )
+          if (df==3) model <- logistic.mm.aireml(Y, X = X, K, get.P = TRUE, ... )
           omega <- model$BLUP_omega
 		  if (!is.null(X)) omega <- omega + X%*%model$BLUP_beta
 		  pi <- 1/(1+exp(-omega))
-          t <- .Call("gg_GxE_lmm_score_2df", PACKAGE = "GEnX", x@bed, Y-pi, model$P, x@mu, E, beg-1, end-1)
-          t$p <- pchisq( t$score, df = 2, lower.tail=FALSE)
-		} else if (df==3) {
-          model <- logistic.mm.aireml(Y, X = X, K, get.P = TRUE, ... )
-          omega <- model$BLUP_omega
-		  if (!is.null(X)) omega <- omega + X%*%model$BLUP_beta
-		  pi <- 1/(1+exp(-omega))
-          t <- .Call("gg_GxE_lmm_score_3df", PACKAGE = "GEnX", x@bed, Y-pi, model$P, x@mu, E, beg-1, end-1)
-          t$p <- pchisq( t$score, df = 3, lower.tail=FALSE)
-		} else stop("df must be equal to 1, 2, or 3.")		
+          t <- .Call("gg_GxE_lmm_score", PACKAGE = "GEnX", x@bed, Y-pi, model$P, x@mu, E, df, beg, end)
+          t$p <- pchisq( t$score, df = df, lower.tail=FALSE)
+		} else stop("df must be equal to 1, 2, or 3.")
       } else if(test == "wald") {
-	    #stop("Wald tests for binary trait not available")
-        X <- cbind(X, E, 0, 0) # E and space for the SNP and SNPxE
-        if (df==1) {
-		  t <- .Call("gg_GxE_logitmm_wald_1df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, K, beg-1, end-1, tol)
-		  t$Wald <- (t$beta_ExSNP/t$sd_ExSNP)**2
-          t$p <- pchisq( t$Wald, df = 1, lower.tail=FALSE)
-		} else if (df==2) {
-		  t <- .Call("gg_GxE_logitmm_wald_2df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, K, beg-1, end-1, tol)
-          t$p <- pchisq( t$Wald, df = 2, lower.tail=FALSE)
-		} else if (df==3) {
-		  t <- .Call("gg_GxE_logitmm_wald_3df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, K, beg-1, end-1, tol)
-          t$p <- pchisq( t$Wald, df = 3, lower.tail=FALSE)
+	    stop("Wald tests for binary trait not available")
+        if (df %in% 1:3) {
+          X <- cbind(X, E, 0, 0) # E and space for the SNP and SNPxE
+		  t <- .Call("gg_GxE_logitmm_wald", PACKAGE = "GEnX", x@bed, x@mu, Y, X, K, df, beg-1, end-1, tol)
+          t$p <- pchisq( t$Wald, df = df, lower.tail=FALSE)
 		} else stop("df must be equal to 1, 2, or 3.")
       } else stop("LRT tests for binary trait not available")
     }
@@ -163,7 +139,7 @@ genexE.association.test.dosage <- function(filename, Y, X, E,
   # only fixed effects
   if(match.arg(method) == "lm") {
     if(test != "wald") warning('Method = "lm" force test = "wald"')
-    if(test != "wald") warning('Method = "lm" force test = "wald"')
+    stop("'lm' methods are not implemented yet.")
     if(response == "quantitative") {
       if( any(is.na(Y)) ) 
         stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")

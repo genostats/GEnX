@@ -107,7 +107,7 @@ public:
 
     S.L["h2"] = wrap(H2);
     S.L["LRT"] = wrap(LRT);
-  }
+  };
   
   void run_tests_3df() { 
     int max_iter=10;
@@ -144,6 +144,6 @@ public:
 
     S.L["h2"] = wrap(H2);
     S.L["LRT"] = wrap(LRT);
-  }
+  };
 };
 

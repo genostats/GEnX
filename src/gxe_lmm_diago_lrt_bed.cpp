@@ -22,22 +22,23 @@ List GxE_lmm_lrt_bed(XPtr<matrix4> pA, NumericVector pp, NumericVector Y, Numeri
 }
 
 
-RcppExport SEXP gg_GxE_lmm_lrt_bed(SEXP pASEXP, SEXP ppSEXP, SEXP YSEXP, SEXP XSEXP, SEXP pSEXP, SEXP SigmaSEXP, SEXP USEXP, SEXP dfSEXP, SEXP begSEXP, SEXP endSEXP, SEXP tolSEXP) {
+RcppExport SEXP gg_GxE_lmm_lrt_bed(SEXP pASEXP, SEXP ppSEXP, SEXP YSEXP, SEXP XSEXP, SEXP pSEXP, SEXP SigmaSEXP, SEXP USEXP, SEXP dfSEXP,
+                                      SEXP begSEXP, SEXP endSEXP, SEXP tolSEXP) {
 BEGIN_RCPP
-  Rcpp::RObject __result;
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type pp(ppSEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP );
-        Rcpp::traits::input_parameter< double >::type p(pSEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type Sigma(SigmaSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type U(USEXP );
-        Rcpp::traits::input_parameter< int >::type df(dfSEXP );
-        Rcpp::traits::input_parameter< int >::type beg(begSEXP );
-        Rcpp::traits::input_parameter< int >::type end(endSEXP );
-        Rcpp::traits::input_parameter< double >::type tol(tolSEXP );
-        __result = Rcpp::wrap(GxE_lmm_lrt_bed(pA, pp, Y, X, p, Sigma, U, df, beg, end, tol));
-    return __result;
-END_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP );
+    Rcpp::traits::input_parameter< NumericVector >::type pp(ppSEXP );
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Sigma(SigmaSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type U(USEXP);
+    Rcpp::traits::input_parameter< int >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< int >::type beg(begSEXP);
+    Rcpp::traits::input_parameter< int >::type end(endSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(GxE_lmm_lrt_bed(pA, pp, Y, X, p, Sigma, U, df, beg, end, tol));
+    return rcpp_result_gen;                                                                                                                                             
+END_RCPP                                                                                                                                                                
 }
