@@ -92,11 +92,10 @@ genexE.association.test.dosage <- function(filename, Y, X, E,
 		if (df==1) {
 		  stop("For 1 df interaction test, score is not judicious (computationnaly heavy). Try LRT or Wald tesst.")
 		} else if (df %in% 2:3) {
-		  stop('Score not implemented yet')
-		  X <- cbind(X, E)
-          model <- lmm.aireml(Y, X = X, K, get.P = TRUE, ... )
-          t <- .Call("gg_GxE_lmm_score_2df", PACKAGE = "GEnX", x@bed, model$Py, model$P, x@mu, E, beg-1, end-1)
-          t$p <- pchisq( t$score, df = 2, lower.tail=FALSE)
+          if (df==2) model <- lmm.aireml(Y, X = cbind(X, E), K, get.P = TRUE, ... )
+          if (df==3) model <- lmm.aireml(Y, X = X, K, get.P = TRUE, ... )
+          t <- .Call("gg_GxE_lmm_score_dosage", PACKAGE = "GEnX", filename, model$Py, model$P, E, df, beg, end)
+          t$p <- pchisq( t$score, df = df, lower.tail=FALSE)
 		} else stop("df must be equal to 1, 2, or 3.")		
       } else if(test == "wald") {
 		if (df %in% 1:3) {
@@ -104,7 +103,7 @@ genexE.association.test.dosage <- function(filename, Y, X, E,
           t <- .Call("gg_GxE_lmm_wald_dosage", PACKAGE = "GEnX", filename, Y, X, p, eigenK$values, eigenK$vectors, df, beg, end, tol)
 		  t$p <- pchisq( t$Wald, df = df, lower.tail=FALSE)
         } else stop("df must be equal to 1, 2, or 3.")
-      } else ( test == "lrt") {
+      } else { # test == "lrt"
         if (df %in% 1:3)
         {
           X <- cbind(X, E, 0, 0) # space for the SNP and interaction

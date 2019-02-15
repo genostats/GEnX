@@ -69,25 +69,20 @@ genexE.association.test_bis <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x
       if(test == "score") {
 		if (df==1) {
 		  stop("For 1 df interaction test, score is not judicious (computationnaly heavy). Try LRT or Wald tesst.")
-		} else if (df==2) {
-		  X <- cbind(X, E)
-          model <- lmm.aireml(Y, X = X, K, get.P = TRUE, ... )
-          t <- .Call("gg_GxE_lmm_score_2df", PACKAGE = "GEnX", x@bed, model$Py, model$P, x@mu, E, beg-1, end-1)
-          t$p <- pchisq( t$score, df = 2, lower.tail=FALSE)
-		} else if (df==3) {
-          model <- lmm.aireml(Y, X = X, K, get.P = TRUE, ... )
-          t <- .Call("gg_GxE_lmm_score_3df", PACKAGE = "GEnX", x@bed, model$Py, model$P, x@mu, E, beg-1, end-1)
-          t$p <- pchisq( t$score, df = 3, lower.tail=FALSE)
+		} else if (df %in% 2:3) {
+		  if (df==2) model <- lmm.aireml(Y, X = cbind(X, E), K, get.P = TRUE, ... )
+          if (df==3) model <- lmm.aireml(Y, X = X, K, get.P = TRUE, ... )
+          t <- .Call("gg_GxE_lmm_score_bed", PACKAGE = "GEnX", x@bed, x@p, model$Py, model$P, E, df, beg-1, end-1)
+          t$p <- pchisq( t$score, df = df, lower.tail=FALSE)
 		} else stop("df must be equal to 1, 2, or 3.")		
       } else if(test == "wald") {
 		if (df %in% 1:3) {
 		  X <- cbind(X, E, 0, 0) # space for the SNP, E and SNPxE
-          t <- .Call("gg_GxE_lmm_wald", PACKAGE = "GEnX", x@bed, x@mu, Y, X, p, eigenK$values, eigenK$vectors, beg-1, end-1, tol)
+          t <- .Call("gg_GxE_lmm_wald", PACKAGE = "GEnX", x@bed, x@p, Y, X, p, eigenK$values, eigenK$vectors, beg-1, end-1, tol)
 		  t$p <- pchisq( t$Wald, df = df, lower.tail=FALSE)
         } else stop("df must be equal to 1, 2, or 3.")
       } else { # test == "lrt"
-        if (df %in% 1:3)
-        {
+        if (df %in% 1:3) {
           X <- cbind(X, E, 0, 0) # space for the SNP and interaction
           cat('OK\n')
           t <- .Call("gg_GxE_lmm_lrt_bed", PACKAGE = "GEnX", x@bed, x@p, Y, X, p, eigenK$values, eigenK$vectors, df, beg-1, end-1, tol)
