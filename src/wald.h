@@ -13,7 +13,8 @@ inline void wald_compute(Eigen::VectorXd & beta, Eigen::MatrixXd & VAR, double &
   MatrixXd VAR_i(r,r);
   double d, log_d;
 
-  sym_inverse(VAR, VAR_i, log_d, d, 1e-5);
+  VAR_i = VAR.llt().solve( MatrixXd::Identity(r,r) );
+  //sym_inverse(VAR, VAR_i, log_d, d, 1e-5);
   wald = beta.transpose() * ( VAR_i * beta );
 }
 
