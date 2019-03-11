@@ -126,26 +126,12 @@ genexE.association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), 
       } else stop("df must be equal to 1, 2, or 3.")
     }
     if(response == "binary") {
-      if( any(is.na(Y)) ) 
-        stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")
+      if( any(is.na(Y)) ) stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")
       X <- cbind(X, E, 0, 0)
-      if (df==1) {
-        t <- .Call("gg_GxE_logit_wald_1df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, beg-1, end-1, tol);
-        t$Wald <- (t$beta_ExSNP/t$sd_ExSNP)**2
-        t$p <- pchisq( t$Wald, df = 1, lower.tail=FALSE)
-      } else if (df==2) {
-        t <- .Call("gg_GxE_logit_wald_2df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, beg-1, end-1, tol);
-        t$p <- pchisq( t$Wald, df = 2, lower.tail=FALSE)
-      } else if (df==3) {
-        t <- .Call("gg_GxE_logit_wald_3df", PACKAGE = "GEnX", x@bed, x@mu, Y, X, beg-1, end-1, tol);
-        t$p <- pchisq( t$Wald, df = 3, lower.tail=FALSE)
-      }
-      #if( any(is.na(Y)) ) stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")
-      #X <- cbind(X, E, 0, 0)
-      #if (df %in% 1:3) {
-      #  t <- .Call("gg_GxE_logit_wald_bed", PACKAGE = "GEnX", x@bed, x@p, Y, X, df, beg-1, end-1, tol);
-      #  t$p <- pchisq( t$Wald, df = df, lower.tail=FALSE)
-      #} else stop("df must be equal to 1, 2, or 3.")
+      if (df %in% 1:3) {
+        t <- .Call("gg_GxE_logit_wald_bed", PACKAGE = "GEnX", x@bed, x@p, Y, X, df, beg-1, end-1, tol);
+        t$p <- pchisq( t$Wald, df = df, lower.tail=FALSE)
+      } else stop("df must be equal to 1, 2, or 3.")
     }
   }
   L <- list(chr = x@snps$chr, pos = x@snps$pos, id  = x@snps$id)

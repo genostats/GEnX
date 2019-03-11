@@ -144,10 +144,9 @@ genexE.association.test.dosage <- function(filename, Y, X, E,
       } else stop("df must be equal to 1, 2, or 3.")
     }
     if(response == "binary") {
-      stop("'lm' methods for binary phenotype are not implemented yet.")
       if( any(is.na(Y)) ) stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")
       X <- cbind(X, E, 0, 0)
-      if (df==1) {
+      if (df %in% 1:3) {
         t <- .Call("gg_GxE_logit_wald_dosage", PACKAGE = "GEnX", filename, Y, X, df, beg, end, tol);
         t$p <- pchisq( t$Wald, df = df, lower.tail=FALSE)
       } else stop("df must be equal to 1, 2, or 3.")
