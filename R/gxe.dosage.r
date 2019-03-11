@@ -134,7 +134,6 @@ genexE.association.test.dosage <- function(filename, Y, X, E,
   # only fixed effects
   if(match.arg(method) == "lm") {
     if(test != "wald") warning('Method = "lm" force test = "wald"')
-    stop("'lm' methods are not implemented yet.")
     if(response == "quantitative") {
       if( any(is.na(Y)) ) 
         stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")
@@ -145,6 +144,7 @@ genexE.association.test.dosage <- function(filename, Y, X, E,
       } else stop("df must be equal to 1, 2, or 3.")
     }
     if(response == "binary") {
+      stop("'lm' methods for binary phenotype are not implemented yet.")
       if( any(is.na(Y)) ) stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")
       X <- cbind(X, E, 0, 0)
       if (df==1) {
