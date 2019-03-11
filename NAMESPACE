@@ -11,3 +11,4 @@ importFrom("RcppParallel", "setThreadOptions", "defaultNumThreads")
 useDynLib(GEnX, .registration = TRUE)
 
 export(genexE.association.test)
+export(genexE.association.test.dosage)

@@ -1,7 +1,8 @@
-\name{genexE.association.test}
+\name{genexE.association.test/genexE.association.test.dosage}
 \alias{genexE.association.test}
+\alias{genexE.association.test.dosage}
 
-\title{ Gene x Environement Association Test }
+\title{ Gene x Environement Association Test for genoype or dosage data}
 
 \description{ Association tests between phenotype and interaction between SNPs and environment variable. }
 \usage{ 
@@ -13,10 +14,19 @@ genexE.association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)), E,
                  K, eigenK,
                  beg = 1, end = ncol(x), p = 0,
                  tol = .Machine$double.eps^0.25, ...)
+genexE.association.test.dosage(filename, Y, X, E,
+                 method = c("lm", "lmm"),
+                 response = c("quantitative", "binary"), 
+                 test = c("score", "wald", "lrt"),
+                 df=c(1,2,3),
+                 K, eigenK,
+                 beg = 1, end = ncol(x), p = 0,
+                 tol = .Machine$double.eps^0.25, ...)
 }
 
 \arguments{
   \item{x}{ A \code{\link{bed.matrix}} }
+  \item{filename}{ Dosage filename }
   \item{Y}{ The phenotype vector. Default is the column (\code{pheno}) of \code{x@ped} }
   \item{X}{ A covariable matrix. The default is a column vector of ones, to include an intercept in the model }
   \item{E}{ The environmental variable vector }
@@ -140,4 +150,4 @@ t_binary$p <- t_binary$p
 manhattan(t_binary, col = rgb(lds,0,0), pch = 20)
 }}
 
-\keyword{ Gene x Environment Iteracttion Association Test }
+\keyword{ Gene x Environment Iteracttion Association Test, Genotypes, Dosages }
