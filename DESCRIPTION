@@ -1,7 +1,7 @@
 Package: GEnX
 Type: Package
 Title: Gene x environment analysis based on gaston package
-Version: 1.0
+Version: 2.0
 Date: 2017-05-24
 Encoding: UTF-8
 Author: Claire Dandine-Roulland
@@ -10,7 +10,7 @@ Description: Gene x environment association tests in classical or mixed and locg
 License: GPL-3
 LinkingTo: Rcpp, RcppParallel, RcppEigen, gaston, gaston.utils
 Depends: Rcpp, RcppParallel, methods
-Imports: gaston
+Imports: gaston, gaston.utils
 NeedsCompilation: yes
 LazyLoad: yes
 LazyData: yes

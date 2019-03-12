@@ -1,5 +1,6 @@
 import(methods)
 import(gaston)
+import(gaston.utils)
 
 importFrom("grDevices", "heat.colors", "dev.off", "pdf", "rgb")
 importFrom("graphics", "contour", "image", "legend", "par", "plot", "polygon", "rect", "segments", "strheight", "strwidth", "text")
