@@ -26,7 +26,7 @@ genexE.association.test.dosage(filename, Y, X, E,
 
 \arguments{
   \item{x}{ A \code{\link{bed.matrix}} }
-  \item{filename}{ Dosage filename }
+  \item{filename}{ Dosage filename (vcf.gz) }
   \item{Y}{ The phenotype vector. Default is the column (\code{pheno}) of \code{x@ped} }
   \item{X}{ A covariable matrix. The default is a column vector of ones, to include an intercept in the model }
   \item{E}{ The environmental variable vector }
@@ -76,7 +76,7 @@ genexE.association.test.dosage(filename, Y, X, E,
   If \code{test = "score"}, all parameters are estimated with the same procedure as in 
   \code{\link{lmm.aireml}} and the argument \code{K} is used to specify the GRM matrix (or a list of GRM
   matrices for inclusion of several random effects in the model). If \code{p} is positive, the paramater \code{eigenK}
-  needs to be given as well.
+  needs to be given as well. Moreover, 1 df score test is not availaible because it is very computationnaly heavy.
   For Wald and LRT tests the procedure used is the same as in \code{\link{lmm.diago}} and \code{eigenK} is used to 
   specify the GRM matrix.
 
@@ -93,7 +93,14 @@ genexE.association.test.dosage(filename, Y, X, E,
 
 \value{
   A data frame, giving for each considered SNP, some of the following columns depending on the 
-  values of \code{method} and \code{test}:
+  type of data and on the values of \code{method} and \code{test}:
+  \item{id}{Name of each SNP}
+  \item{chr}{Chromosome of each SNP}
+  \item{pos}{Position (bp) of each SNP}
+  \item{A1}{Reference allele of each SNP}
+  \item{A2}{Alternative (effect) allele of each SNP}
+  \item{freq1}{Frequence of allele A1}
+  \item{freq2}{Frequence of allele A2}
   \item{h2}{Estimated value of \eqn{\tau \over {\tau + \sigma^2}}{tau/(tau + sigma^2)}}
   \item{tau}{Estimated value of \eqn{\tau}{tau}}
   \item{beta_E}{Estimated value of \eqn{\beta_E}{beta_E}}
