@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include "gaston/logit.h"
+#include "gaston/logit_model.h"
 #include "gaston/matrix4.h"
 #include "wald.h"
 #include <ctime>
@@ -85,23 +85,8 @@ List GxE_logit_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
       }
     }
 
-    /*
-	MatrixXf Varbeta(r,r);
-	MatrixXf H(r,r);
-    logistic_model_f(y, x, tol, Beta, Varbeta);
-	
 	MatrixXd varbeta(r,r);
-	VectorXd beta(r);
-    for(int k = 0; k < r; k++) {
-	  beta(k) = (float) Beta(k);
-      for(int l = 0; l < r; l++) {
-        varbeta(k,l) = (float) Varbeta(k,l);
-	  }
-    }
-	*/
-	
-	MatrixXd varbeta(r,r);
-	logistic_model(y, x, tol, beta, varbeta);
+	logistic_model2<double>(y, x, beta, varbeta, tol);
 	
 	for(int k = 0; k < r-3; k++) {
 	  BETA(i-beg,k) = beta(k);
@@ -205,21 +190,8 @@ List GxE_logit_wald_2df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
       }
     }
 
-	/*
-    MatrixXf Varbeta(r,r);
-    logistic_model_f(y, x, tol, Beta, Varbeta);
-	
 	MatrixXd varbeta(r,r);
-	VectorXd beta(r);
-    for(int k = 0; k < r; k++) {
-	  beta(k) = (float) Beta(k);
-      for(int l = 0; l < r; l++)
-        varbeta(k,l) = (float) Varbeta(k,l);
-    }
-	*/
-	
-	MatrixXd varbeta(r,r);
-	logistic_model(y, x, tol, beta, varbeta);
+	logistic_model2<double>(y, x, beta, varbeta, tol);
 	
     BETA_E(i-beg) = beta(r-3);
     BETA_SNP(i-beg) = beta(r-2);
@@ -326,21 +298,8 @@ List GxE_logit_wald_3df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Num
       }
     }
 
-	/*
-    MatrixXf Varbeta(r,r);
-    logistic_model_f(y, x, tol, Beta, Varbeta);
-	
 	MatrixXd varbeta(r,r);
-	VectorXd beta(r);
-    for(int k = 0; k < r; k++) {
-	  beta(k) = (float) Beta(k);
-      for(int l = 0; l < r; l++)
-        varbeta(k,l) = (float) Varbeta(k,l);
-    }
-	*/
-	
-	MatrixXd varbeta(r,r);
-	logistic_model(y, x, tol, beta, varbeta);
+	logistic_model2<double>(y, x, beta, varbeta, tol);
 	
     BETA_E(i-beg) = beta(r-3);
     BETA_SNP(i-beg) = beta(r-2);

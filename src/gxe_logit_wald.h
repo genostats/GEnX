@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include "gaston/logit.h"
+#include "gaston/logit_model.h"
 #include "gaston/matrix4.h"
 #include "gaston.utils/snp_filler.h"
 #include "wald.h"
@@ -47,7 +47,7 @@ public:
       x.col(r-1) = SNP.cwiseProduct(x.col(r-3));
       
       // Model
-      logistic_model(y, x, tol, beta, varbeta);
+      logistic_model2<double>(y, x, beta, varbeta, tol);
       
       BETA_E.push_back( beta(r-3) );
       BETA_SNP.push_back( beta(r-2) );
@@ -84,7 +84,7 @@ public:
       x.col(r-1) = SNP.cwiseProduct(x.col(r-3));
       
       // Model
-      logistic_model(y, x, tol, beta, varbeta);
+      logistic_model2<double>(y, x, beta, varbeta, tol);
       
       BETA_E.push_back( beta(r-3) );
       BETA_SNP.push_back( beta(r-2) );
@@ -124,7 +124,7 @@ public:
       x.col(r-1) = SNP.cwiseProduct(x.col(r-3));
       
       // Model
-      logistic_model(y, x, tol, beta, varbeta);
+      logistic_model2<double>(y, x, beta, varbeta, tol);
       
       BETA_E.push_back( beta(r-3) );
       BETA_SNP.push_back( beta(r-2) );
