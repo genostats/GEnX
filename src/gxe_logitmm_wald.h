@@ -51,14 +51,14 @@ public:
     xx=x0.leftCols(r-2);
     
     // object for likelihood maximization
-    AIREML1_logit(y0, xx, kk, true, 1e-6, 10, 1e-5, false, tau, niter, P, omega, beta0, VAR0, false, false);
+    AIREML1_logit(y0, xx, kk, true, 1e-6, 10, 1e-5, false, tau, niter, P, omega, beta0, VAR0, false, false, false);
     
     while( S.snp_fill(&SNP[0]) ) {      
       x0.col(r-2) = SNP;
       x0.col(r-1) = SNP.cwiseProduct(x0.col(r-3));
     
       if( std::isnan(tau) ) tau = 0;
-      AIREML1_logit(y0, x0, kk, true, 1e-6, max_iter, tol, false, tau, niter, P, omega, beta, VAR, true, false);
+      AIREML1_logit(y0, x0, kk, true, 1e-6, max_iter, tol, false, tau, niter, P, omega, beta, VAR, true, false, false);
 
       TAU.push_back(tau);
       BETA_E.push_back( beta(r-3) );
@@ -96,14 +96,14 @@ public:
     xx=x0.leftCols(r-2);
     
     // object for likelihood maximization
-    AIREML1_logit(y0, xx, kk, true, 1e-6, 10, 1e-5, false, tau, niter, P, omega, beta0, VAR0, false, false);
+    AIREML1_logit(y0, xx, kk, true, 1e-6, 10, 1e-5, false, tau, niter, P, omega, beta0, VAR0, false, false, false);
     
     while( S.snp_fill(&SNP[0]) ) {      
       x0.col(r-2) = SNP;
       x0.col(r-1) = SNP.cwiseProduct(x0.col(r-3));
     
       if( std::isnan(tau) ) tau = 0;
-      AIREML1_logit(y0, x0, kk, true, 1e-6, max_iter, tol, false, tau, niter, P, omega, beta, VAR, true, false);
+      AIREML1_logit(y0, x0, kk, true, 1e-6, max_iter, tol, false, tau, niter, P, omega, beta, VAR, true, false, false);
 
       TAU.push_back(tau);
       BETA_E.push_back( beta(r-3) );
@@ -145,14 +145,14 @@ public:
     xx=x0.leftCols(r-2);
     
     // object for likelihood maximization
-    AIREML1_logit(y0, xx, kk, true, 1e-6, 10, 1e-5, false, tau, niter, P, omega, beta0, VAR0, false, false);
+    AIREML1_logit(y0, xx, kk, true, 1e-6, 10, 1e-5, false, tau, niter, P, omega, beta0, VAR0, false, false, false);
     
     while( S.snp_fill(&SNP[0]) ) {      
       x0.col(r-2) = SNP;
       x0.col(r-1) = SNP.cwiseProduct(x0.col(r-3));
     
       if( std::isnan(tau) ) tau = 0;
-      AIREML1_logit(y0, x0, kk, true, 1e-6, max_iter, tol, false, tau, niter, P, omega, beta, VAR, true, false);
+      AIREML1_logit(y0, x0, kk, true, 1e-6, max_iter, tol, false, tau, niter, P, omega, beta, VAR, true, false, false);
 
       TAU.push_back(tau);
       BETA_E.push_back( beta(r-3) );

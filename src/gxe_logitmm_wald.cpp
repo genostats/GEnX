@@ -81,7 +81,7 @@ List GxE_logitmm_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, N
   for(int i = 0; i < n; i++) {
 	  x(i,r-2) = 0;
       x(i,r-1) = 0; }
-  AIREML1_logit(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, false, false);
+  AIREML1_logit(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, false, false, false);
 
   // Rcout << min_h2 << " < h2 < " << max_h2 << "\n";
   for(int i = beg; i <= end; i++) {
@@ -118,7 +118,7 @@ List GxE_logitmm_wald_1df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, N
 
     // use last computed tau as starting point...
     if( std::isnan(tau) ) tau = 0;
-    AIREML1_logit(y, x, kk, true, 0, 50, tol, false, tau, niter, P, omega, beta, varbeta, true, false);
+    AIREML1_logit(y, x, kk, true, 0, 50, tol, false, tau, niter, P, omega, beta, varbeta, true, false, false);
 	//AIREML1_logit_f(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, true, true);
 
     TAU(i-beg) = tau;
@@ -224,7 +224,7 @@ List GxE_logitmm_wald_2df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, N
   for(int i = 0; i < n; i++) {
 	  x(i,r-2) = 0;
       x(i,r-1) = 0; }
-  AIREML1_logit(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, false, false);
+  AIREML1_logit(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, false, false, false);
 
   // Rcout << min_h2 << " < h2 < " << max_h2 << "\n";
   for(int i = beg; i <= end; i++) {
@@ -261,7 +261,7 @@ List GxE_logitmm_wald_2df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, N
 
     // use last computed tau as starting point...
     if( std::isnan(tau) ) tau = 0;
-    AIREML1_logit(y, x, kk, true, 0, 50, tol, false, tau, niter, P, omega, beta, varbeta, true, false);
+    AIREML1_logit(y, x, kk, true, 0, 50, tol, false, tau, niter, P, omega, beta, varbeta, true, false, false);
 	//AIREML1_logit_f(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, true, true);
 
     TAU(i-beg) = tau;
@@ -376,7 +376,7 @@ List GxE_logitmm_wald_3df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, N
   for(int i = 0; i < n; i++) {
 	  x(i,r-2) = 0;
       x(i,r-1) = 0; }
-  AIREML1_logit(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, false, false);
+  AIREML1_logit(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, false, false, false);
 
   // Rcout << min_h2 << " < h2 < " << max_h2 << "\n";
   for(int i = beg; i <= end; i++) {
@@ -413,7 +413,7 @@ List GxE_logitmm_wald_3df(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, N
 
     // use last computed tau as starting point...
     if( std::isnan(tau) ) tau = 0;
-    AIREML1_logit(y, x, kk, true, 0, 50, tol, false, tau, niter, P, omega, beta, varbeta, true, false);
+    AIREML1_logit(y, x, kk, true, 0, 50, tol, false, tau, niter, P, omega, beta, varbeta, true, false, false);
 	//AIREML1_logit_f(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, true, true);
 
     TAU(i-beg) = tau;
